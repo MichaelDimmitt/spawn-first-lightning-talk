@@ -1,16 +1,12 @@
 defmodule SpawnExample do
-  send self(), {:hello, "world"}
-  receive do
-    {:hello, msg} -> msg
-    {:world, msg} -> "won't match"
-  end
-  
-  spawn(fn -> loop() end)
-  def loop() do
+  def start() do
+    send self(), {:hello, "world"}
     receive do
-      message -> IO.puts "received #{message}"; 
-      loop();
+      {:hello, msg} -> IO.inspect(msg)
+      {:world, _msg} -> IO.inspect("won't match")
     end
+
+
   end
 
   def resolveAfter2Seconds() do
@@ -34,8 +30,10 @@ defmodule SpawnExample do
   end
   def concurrentStart() do
     IO.inspect('==CONCURRENT START with await==');
-    slow = spawn(fn -> resolveAfter2Seconds() end; // starts timer immediately
-    fast = spawn(fn -> resolveAfter1Second()  end; // starts timer immediately
+    slow = spawn(fn -> resolveAfter2Seconds() end); ## starts timer immediately
+    fast = spawn(fn -> resolveAfter1Second()  end); ## starts timer immediately
+    IO.inspect(slow, fast)
   end
 
 end
+SpawnExample.start()
